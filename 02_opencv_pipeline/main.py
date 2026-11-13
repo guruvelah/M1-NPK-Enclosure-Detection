@@ -1,63 +1,50 @@
 import argparse
-import os
 import time
 import cv2
-from ultralytics import YOLO
 
-def parse_args():
-    p = argparse.ArgumentParser()
-    p.add_argument("--source", default="0", help="Camera index or video/image path")
-    p.add_argument("--weights", default="models/best.pt")
-    p.add_argument("--conf", type=float, default=0.25)
-    p.add_argument("--imgsz", type=int, default=640)
-    return p.parse_args()
+try:
+    from ultralytics import YOLO
+except ImportError:
+    YOLO = None
 
-def main():
-    args = parse_args()
-    if not os.path.isfile(args.weights):
-        raise FileNotFoundError(
-            f"Model weights not found: {args.weights}. Train the model first."
-        )
+p = argparse.ArgumentParser()
+p.add_argument("--source", default="0")
+p.add_argument("--weights", default="models/best.pt")
+args = p.parse_args()
 
-    source = int(args.source) if args.source.isdigit() else args.source
-    model = YOLO(args.weights)
-    cap = cv2.VideoCapture(source)
+if YOLO is None:
+    raise RuntimeError("Install ultralytics first: pip install ultralytics")
 
-    if not cap.isOpened():
-        raise RuntimeError(f"Unable to open source: {args.source}")
+source = int(args.source) if args.source.isdigit() else args.source
+model = YOLO(args.weights)
+cap = cv2.VideoCapture(source, cv2.CAP_V4L2)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-    previous = time.perf_counter()
-    fps = 0.0
+if not cap.isOpened():
+    raise RuntimeError("Could not open Raspberry Pi camera")
 
-    try:
-        while True:
-            ok, frame = cap.read()
-            if not ok:
-                print("End of stream or camera frame unavailable.")
-                break
+prev = time.perf_counter()
 
-            start = time.perf_counter()
-            result = model.predict(frame, conf=args.conf, imgsz=args.imgsz, verbose=False)[0]
-            latency_ms = (time.perf_counter() - start) * 1000.0
+while True:
+    ok, frame = cap.read()
+    if not ok:
+        break
 
-            annotated = result.plot()
-            now = time.perf_counter()
-            dt = now - previous
-            previous = now
-            if dt > 0:
-                fps = 0.9 * fps + 0.1 * (1.0 / dt) if fps else 1.0 / dt
+    t0 = time.perf_counter()
+    result = model.predict(frame, imgsz=320, conf=0.40, verbose=False)[0]
+    latency_ms = (time.perf_counter() - t0) * 1000
+    fps = 1000 / latency_ms if latency_ms > 0 else 0
 
-            cv2.putText(annotated, f"Inference: {latency_ms:.1f} ms",
-                        (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0,255,0), 2)
-            cv2.putText(annotated, f"Pipeline FPS: {fps:.1f}",
-                        (10, 52), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0,255,0), 2)
+    annotated = result.plot()
+    cv2.putText(annotated, f"Inference: {latency_ms:.1f} ms",
+                (10, 25), cv2.FONT_HERSHEY_SIMPLEX, .6, (0,255,0), 2)
+    cv2.putText(annotated, f"FPS: {fps:.1f}",
+                (10, 50), cv2.FONT_HERSHEY_SIMPLEX, .6, (0,255,0), 2)
 
-            cv2.imshow("Range Finder Enclosure Detection", annotated)
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                break
-    finally:
-        cap.release()
-        cv2.destroyAllWindows()
+    cv2.imshow("Range Finder Enclosure", annotated)
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
 
-if __name__ == "__main__":
-    main()
+cap.release()
+cv2.destroyAllWindows()
