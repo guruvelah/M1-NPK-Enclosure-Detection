@@ -1,82 +1,69 @@
-# Edge AI Embedded Vision — M1 & M2
+# M1 — Range Finder Enclosure Detection
 
-## Project
-**IDRP Parts / Range Finder Enclosure Detection**
+This repository follows the six-task M1 assessment structure shown in the supplied class reference, adapted for the user's range-finder enclosure project and the supplied top/bottom STL models.
 
-This repository contains the M1 Detect and M2 Optimize assessment deliverables for Raspberry Pi edge vision.
+## Six task folders
 
-### Objects
-- Top model
-- Bottom model
-- Physical 3D-printed enclosure / printed part
+| Folder | Assessment category | Deliverables |
+|---|---|---|
+| [01_camera_and_repo](01_camera_and_repo/) | Camera and repository | Camera specification, camera test and frame capture |
+| [02_opencv_pipeline](02_opencv_pipeline/) | OpenCV pipeline | Camera capture, preprocessing and detection visualization |
+| [03_baseline_speed](03_baseline_speed/) | Baseline speed | Repeatable benchmark and system monitoring |
+| [04_dataset_v1](04_dataset_v1/) | Dataset v1 | Dataset card, YOLO YAML and annotation instructions |
+| [05_correct_split](05_correct_split/) | Correct split | Group-aware split script and leakage checks |
+| [06_train_and_run_detector](06_train_and_run_detector/) | Train and run detector | YOLO training and inference scripts |
 
-### M1 — Detect
-Implemented:
-- configurable camera input
-- Ultralytics YOLO detector
-- confidence threshold
-- IoU threshold
-- bounding-box rendering
-- per-detection confidence
-- measured inference latency
-- evidence documentation
+## Detection classes
 
-**Physical enclosure evidence:** three supplied viewpoints are included under `evidence/m1/`.
+- `top_part`
+- `bottom_part`
+- `range_finder_enclosure`
 
-> The supplied screenshots are labelled as demo/mockup and illustrative-only. They are not claimed as live Raspberry Pi inference measurements.
+## Supplied visual evidence
 
-### M2 — Optimize
-Implemented:
-- repeatable frame benchmark
-- FPS measurement
-- mean/median/min/max latency
-- configurable frame count
-- configurable detector input settings
-- benchmark CSV output
+The supplied photographs show a white rounded rectangular 3D-printed enclosure, a two-piece seam and three circular openings on its front face. The screenshots contain an illustrative detection overlay.
 
-M2 performance values must be populated from the actual Raspberry Pi run. No hardware measurements are fabricated.
+**Evidence integrity:** the overlay states that it is a demo/mockup, not live inference, and that FPS, latency and confidence are illustrative only. They are not represented as Raspberry Pi performance measurements. The actual photos can be added to `evidence/m1/` from the local project folder.
 
-### Raspberry Pi quick start
+## Setup
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+python -m venv .venv
+# Windows: .venv\\Scripts\\activate
+# Raspberry Pi/Linux: source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Place the trained YOLO weights at:
-
-```text
-models/vision_model.pt
-```
-
-Then:
-
+Check camera:
 ```bash
-python -m src.main
+python 01_camera_and_repo/camera_test.py
 ```
 
-Run M2:
-
-```BENCHMARK_FRAMES=100 python scripts/benchmark.py
+OpenCV camera pipeline:
+```bash
+python 02_opencv_pipeline/main.py
 ```
 
-The result is saved to:
-
-```text
-data/measurements/benchmark.csv
+Baseline benchmark:
+```bash
+python 03_baseline_speed/benchmark.py --frames 100
 ```
 
-## M1 evidence
-See:
-- `milestones/M1_Detect.md`
-- `evidence/m1/`
+Prepare split:
+```bash
+python 05_correct_split/split_dataset.py --input dataset/raw --output dataset/split
+```
 
-## M2 evidence
-See:
-- `milestones/M2_Optimize.md`
-- `scripts/benchmark.py`
-- `data/measurements/`
+Train after adding labelled images:
+```bash
+python 06_train_and_run_detector/train.py --data 04_dataset_v1/data.yaml
+```
 
-## Assessment integrity
-Measured FPS, latency, confidence and model-size values are intentionally not invented. Run the supplied benchmark on the target Raspberry Pi and commit the generated CSV/results.
+Run inference after training:
+```bash
+python 06_train_and_run_detector/detect.py --source 0
+```
+
+## Important
+
+This repository supplies code scaffolding and assessment documentation, not pre-existing Raspberry Pi results. Add your real photos and YOLO labels before training. Run the scripts on the target Raspberry Pi and record actual FPS, latency, model size and detection metrics. No measured results are fabricated here.
