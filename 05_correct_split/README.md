@@ -1,30 +1,15 @@
 # 05 — Correct Split
 
-## Purpose
-Split the image dataset into train, validation and test partitions while grouping capture sessions to reduce near-duplicate leakage.
+**Marks: 2/20**
 
-## Expected raw layout
+The split is **grouped by source capture**, preventing variants of the same original image from leaking into multiple partitions.
 
-```text
-dataset/raw/
-  images/
-    session_001_img001.jpg
-    session_001_img002.jpg
-    session_002_img001.jpg
-  labels/
-    session_001_img001.txt
-    session_001_img002.txt
-    session_002_img001.txt
-```
+| Split | Images | Source |
+|---|---:|---|
+| Train | 6 | source view 1 |
+| Validation | 6 | source view 2 |
+| Test | 6 | source view 3 |
 
-The script groups files by the filename prefix before the final underscore. Use consistent session prefixes. If the naming convention differs, update the grouping function before running.
+This is intentionally conservative because only three independent source photographs were supplied.
 
-## Run
-```bash
-python 05_correct_split/split_dataset.py --input dataset/raw --output dataset/split
-```
-
-Default ratio: 70% train, 20% validation, 10% test.
-
-## Leakage check
-All images sharing a session prefix must be assigned to the same partition. Review the generated report and confirm the class distributions. For a small dataset, stratification may be approximate; inspect and document the result.
+A larger real Raspberry Pi dataset should use a larger grouped split, for example 70/20/10 by capture session.
