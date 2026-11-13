@@ -1,17 +1,18 @@
 # M1 — Range Finder Enclosure Detection
 
-This repository follows the six-task M1 assessment structure shown in the supplied class reference, adapted for the user's range-finder enclosure project and the supplied top/bottom STL models.
+This repository follows the six-part M1 assessment structure supplied for the Edge AI & Embedded Vision Systems assignment.
 
-## Six task folders
+## Assessment mapping
 
-| Folder | Assessment category | Deliverables |
-|---|---|---|
-| [01_camera_and_repo](01_camera_and_repo/) | Camera and repository | Camera specification, camera test and frame capture |
-| [02_opencv_pipeline](02_opencv_pipeline/) | OpenCV pipeline | Camera capture, preprocessing and detection visualization |
-| [03_baseline_speed](03_baseline_speed/) | Baseline speed | Repeatable benchmark and system monitoring |
-| [04_dataset_v1](04_dataset_v1/) | Dataset v1 | Dataset card, YOLO YAML and annotation instructions |
-| [05_correct_split](05_correct_split/) | Correct split | Group-aware split script and leakage checks |
-| [06_train_and_run_detector](06_train_and_run_detector/) | Train and run detector | YOLO training and inference scripts |
+| Task | Marks | Folder |
+|---|---:|---|
+| Camera and repository | 2 | [01_camera_and_repo](01_camera_and_repo/) |
+| OpenCV pipeline | 4 | [02_opencv_pipeline](02_opencv_pipeline/) |
+| Baseline speed | 3 | [03_baseline_speed](03_baseline_speed/) |
+| Dataset v1 | 4 | [04_dataset_v1](04_dataset_v1/) |
+| Correct split | 2 | [05_correct_split](05_correct_split/) |
+| Train and run detector | 5 | [06_train_and_run_detector](06_train_and_run_detector/) |
+| **M1 total** | **20** | |
 
 ## Detection classes
 
@@ -19,51 +20,40 @@ This repository follows the six-task M1 assessment structure shown in the suppli
 - `bottom_part`
 - `range_finder_enclosure`
 
-## Supplied visual evidence
+## Dataset actually included
 
-The supplied photographs show a white rounded rectangular 3D-printed enclosure, a two-piece seam and three circular openings on its front face. The screenshots contain an illustrative detection overlay.
+An 18-image source-derived dataset is documented under `04_dataset_v1/` and `dataset/`. It uses the three enclosure-view images supplied for this assignment plus five controlled variants per source image.
 
-**Evidence integrity:** the overlay states that it is a demo/mockup, not live inference, and that FPS, latency and confidence are illustrative only. They are not represented as Raspberry Pi performance measurements. The actual photos can be added to `evidence/m1/` from the local project folder.
+The split is leakage-safe by source-image group:
 
-## Setup
+| Split | Images | Source group |
+|---|---:|---|
+| Train | 6 | physical_01 |
+| Validation | 6 | physical_02 |
+| Test | 6 | physical_03 |
 
-```bash
-python -m venv .venv
-# Windows: .venv\\Scripts\\activate
-# Raspberry Pi/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-```
+The supplied source images contain a presentation overlay and explicitly describe the displayed FPS/latency/confidence as illustrative rather than live inference. Therefore those values are **not** reported as Raspberry Pi measurements.
 
-Check camera:
+## Raspberry Pi evidence
+
+Run these on the actual target device:
+
 ```bash
 python 01_camera_and_repo/camera_test.py
+python 01_camera_and_repo/capture_frame.py
+python 03_baseline_speed/benchmark.py --source 0 --frames 100
 ```
 
-OpenCV camera pipeline:
-```bash
-python 02_opencv_pipeline/main.py
-```
+The benchmark produces mean/median latency and FPS for the configured OpenCV path. For the final detector benchmark, use the same protocol around the trained detector.
 
-Baseline benchmark:
-```bash
-python 03_baseline_speed/benchmark.py --frames 100
-```
+## Detector training
 
-Prepare split:
-```bash
-python 05_correct_split/split_dataset.py --input dataset/raw --output dataset/split
-```
+The repository includes a YOLO training/validation entry point. Install the detector runtime on the Raspberry Pi or training machine, then train and validate using the included `dataset/data.yaml`.
 
-Train after adding labelled images:
-```bash
-python 06_train_and_run_detector/train.py --data 04_dataset_v1/data.yaml
-```
+Ultralytics distinguishes quantitative validation on labeled data from prediction on new images: validation reports precision/recall/mAP metrics, while prediction produces annotated outputs for qualitative inspection. citeturn150850search0turn150850search2
 
-Run inference after training:
-```bash
-python 06_train_and_run_detector/detect.py --source 0
-```
+## Submission integrity
 
-## Important
+No Raspberry Pi FPS, latency, confidence, model size, mAP, precision or recall values are fabricated in this repository. Those values must come from the actual hardware/detector run.
 
-This repository supplies code scaffolding and assessment documentation, not pre-existing Raspberry Pi results. Add your real photos and YOLO labels before training. Run the scripts on the target Raspberry Pi and record actual FPS, latency, model size and detection metrics. No measured results are fabricated here.
+See `reports/ASSIGNMENT_STATUS.md` for the exact remaining hardware evidence checklist.
