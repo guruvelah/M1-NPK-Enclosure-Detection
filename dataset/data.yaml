@@ -1,0 +1,9 @@
+path: ../dataset/split
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: top_part
+  1: bottom_part
+  2: range_finder_enclosure
