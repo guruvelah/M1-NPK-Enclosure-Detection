@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+runs/
+dataset/raw/
+dataset/split/
+*.pt
+*.onnx
+*.engine
+03_baseline_speed/results/*.csv
+evidence/camera/*
+!evidence/camera/.gitkeep
