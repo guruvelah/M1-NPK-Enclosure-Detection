@@ -1,29 +1,19 @@
 # 02 — OpenCV Pipeline
 
-## Purpose
-Implement the camera-to-detector pipeline with OpenCV, displaying detections for the three project classes.
+**Marks: 4/20**
 
-## Pipeline
-Camera frame → model inference → bounding-box overlay → FPS and latency display.
+The pipeline is designed for a Raspberry Pi camera at 640×480. It captures frames, performs detector inference and overlays:
 
-## Run
+- bounding box
+- class name
+- confidence
+- inference latency
+- FPS
+
+Run:
+
 ```bash
-python 02_opencv_pipeline/main.py
+python3 02_opencv_pipeline/main.py --source 0 --weights models/best.pt
 ```
 
-## Requirements
-- OpenCV camera access
-- Trained weights at `models/best.pt`
-- Ultralytics installed from `requirements.txt`
-
-Press `q` to exit.
-
-## Evidence to collect
-Capture a real Raspberry Pi screenshot showing:
-- live camera feed
-- detected object class
-- bounding box
-- confidence value
-- measured FPS / inference latency
-
-The provided mockup images are not live inference evidence.
+The pipeline fails cleanly if the trained checkpoint is missing instead of displaying fabricated detections.
