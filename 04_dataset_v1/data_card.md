@@ -1,25 +1,19 @@
 # Dataset Card — Range Finder Enclosure
 
-## Intended task
-Object detection of the printed range-finder enclosure and its top/bottom components.
+18 images are included in the source-derived dataset. Three supplied enclosure-view images form three capture groups, with five controlled variants per source.
 
-## Class list
-- `top_part`
-- `bottom_part`
-- `range_finder_enclosure`
+Classes:
+0. top_part
+1. bottom_part
+2. range_finder_enclosure
 
-## Source
-User-provided Top and Bottom STL files and user-captured photographs are intended sources. No complete annotated dataset was provided in this task.
+Only class 2 is actually represented in the supplied photographs. The other two classes remain part of the assessment schema and require dedicated top/bottom camera captures for genuine per-class evaluation.
 
-## Known limitations
-- Dataset image count: not yet measured
-- Annotation count: not yet measured
-- Camera diversity: pending capture
-- Train/validation/test split: pending real dataset preparation
-- Class balance: pending label audit
+Annotation format: YOLO normalized bounding boxes.
 
-## Collection guidance
-Capture the parts individually and assembled, from multiple orientations and distances, under varied backgrounds and lighting. Keep capture-session IDs to support leakage-safe splitting.
+Leakage-safe split:
+- train: physical_01 group, 6 images
+- val: physical_02 group, 6 images
+- test: physical_03 group, 6 images
 
-## Licensing / privacy
-Use only images the project owner is authorized to use. Avoid capturing identifiable people or private information unnecessarily.
+The split deliberately keeps every variant of one source image in the same partition.
