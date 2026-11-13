@@ -1,0 +1,10 @@
+camera:
+  index: 0
+  width: 640
+  height: 480
+
+detector:
+  weights: models/vision_model.pt
+  confidence: 0.25
+  iou: 0.45
+  device: cpu
