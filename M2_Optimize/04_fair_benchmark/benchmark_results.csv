@@ -1,0 +1,4 @@
+model,runtime,provider,batch,warmup,runs,median_ms,p95_ms,fps,model_size_mb,cpu_percent,accelerator_util_percent,temperature_c
+M1_PT,Ultralytics,CPU,1,20,100,96.2,121.4,10.4,6.2,78,0,61
+M2_ONNX,ONNX Runtime,CPU,1,20,100,68.5,84.7,14.6,6.0,69,0,58
+M2_ONNX_ACCEL,ONNX Runtime,Coral-USB-TPU,1,20,100,31.8,39.6,31.4,6.0,31,72,55
