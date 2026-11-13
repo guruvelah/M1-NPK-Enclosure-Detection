@@ -1,0 +1,21 @@
+TRAINING RESULT — RANGE FINDER ENCLOSURE
+
+Model: YOLO nano
+Epochs: 50
+Image size: 640
+Dataset: 120 images
+Train: 84
+Validation: 24
+Test: 12
+
+Precision: 0.91
+Recall: 0.88
+mAP50: 0.93
+mAP50-95: 0.72
+
+Deployment:
+Input: 640x480
+Inference size: 320x320
+Mean latency: 96.2 ms
+Inference FPS: 10.4
+Average confidence: 0.91
