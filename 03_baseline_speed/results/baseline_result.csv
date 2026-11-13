@@ -1,0 +1,8 @@
+metric,value
+camera_capture_fps,30.0
+opencv_baseline_fps,29.4
+resolution,640x480
+warmup_frames,10
+measured_frames,100
+mean_processing_latency_ms,34.0
+median_processing_latency_ms,33.8
