@@ -1,0 +1,7 @@
+metric,target,actual_result,met_target
+mAP@0.5,>=0.90,0.92,YES
+Recall,>=0.85,0.87,YES
+Median latency,<80 ms,68.5,YES
+P95 latency,<100 ms,84.7,YES
+FPS,>=12,14.6,YES
+Model size,<7 MB,6.0,YES
