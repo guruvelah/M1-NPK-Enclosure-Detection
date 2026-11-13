@@ -1,26 +1,33 @@
 # 06 — Train and Run Detector
 
-## Before training
-1. Collect real images on the target camera.
-2. Label every visible target in YOLO format.
-3. Run the group-aware split from task 05.
-4. Review label files and class distribution.
-5. Install dependencies.
+**Marks: 5/20**
 
-## Train
+Training command:
+
 ```bash
-python 06_train_and_run_detector/train.py --data 04_dataset_v1/data.yaml --epochs 100 --imgsz 640
+python3 -m pip install ultralytics
+yolo detect train model=yolo26n.pt data=dataset/data.yaml epochs=100 imgsz=640 project=runs/detect name=rangefinder
 ```
 
-## Detect from camera
+Validation:
+
 ```bash
-python 06_train_and_run_detector/detect.py --source 0 --weights runs/detect/rangefinder/weights/best.pt
+yolo detect val model=runs/detect/rangefinder/weights/best.pt data=dataset/data.yaml split=test
 ```
 
-## Detect from image
+Inference:
+
 ```bash
-python 06_train_and_run_detector/detect.py --source path/to/test_image.jpg --weights runs/detect/rangefinder/weights/best.pt
+yolo detect predict model=runs/detect/rangefinder/weights/best.pt source=dataset/split/images/test save=True
 ```
 
-## Evaluation
-Record the Ultralytics validation metrics and inspect test-set predictions. Do not claim a trained model or performance score until the dataset is labelled and training has actually run.
+### Required reported metrics
+
+- Precision
+- Recall
+- mAP50
+- mAP50-95
+- inference latency
+- FPS
+
+The numbers must be copied from the actual Pi/model run. No screenshot-only value is presented as a measured model result.
