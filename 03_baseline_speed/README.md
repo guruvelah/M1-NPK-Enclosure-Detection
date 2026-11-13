@@ -1,27 +1,31 @@
 # 03 — Baseline Speed
 
-## Purpose
-Measure baseline end-to-end detector performance on the target Raspberry Pi.
+**Marks: 3/20**
 
-## Run
+Baseline is measured on the Raspberry Pi before optimization.
+
+### Measurement procedure
+
+- Resolution: 640×480
+- Warm-up frames: 10
+- Measured frames: 100
+- Same camera and lighting used for comparison
+- FPS calculated from measured inference latency
+
+Run:
+
 ```bash
-python 03_baseline_speed/benchmark.py --source 0 --weights models/best.pt --frames 100
+python3 03_baseline_speed/benchmark.py --source 0 --frames 100
 ```
 
-Run on the target device. The script performs warm-up inference, measures inference time over the requested number of captured frames, and prints mean/median latency and FPS. It writes CSV results beneath `03_baseline_speed/results/`.
+Example report format:
 
-## System monitor
-In a second terminal:
-```bash
-python 03_baseline_speed/system_monitor.py
-```
+| Metric | Baseline |
+|---|---:|
+| Resolution | 640×480 |
+| Frames | 100 |
+| Mean inference | record from Pi |
+| Median inference | record from Pi |
+| FPS | record from Pi |
 
-## Evidence to collect
-- Raspberry Pi model and OS
-- model file size
-- benchmark command
-- raw terminal output
-- generated CSV
-- CPU and memory snapshot
-
-Never copy benchmark results from another person's device.
+**Important:** the supplied assessment screenshot says its FPS/latency values are illustrative. Therefore this repository does not claim those screenshot numbers as measured Raspberry Pi results.
